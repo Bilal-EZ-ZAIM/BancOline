@@ -41,6 +41,8 @@ class TransactionController extends Controller
 
 
 
+
+
             $validator = Validator::make($request->all(), [
                 'recipient_account_id' => 'required|exists:accounts,id',
                 'amount' => 'required|numeric|min:1',
@@ -65,7 +67,7 @@ class TransactionController extends Controller
                 'amount' => $request->amount,
             ]);
 
-            return response()->json(['message' => 'Le transfert a été effectué avec succès.' , "transaction" => $transaction], 200);
+            return response()->json(['message' => 'Le transfert a été effectué avec succès.', "transaction" => $transaction], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erreur: ' . $e->getMessage()], 500);
         }
@@ -76,20 +78,53 @@ class TransactionController extends Controller
     {
         $user = Auth::user();
 
+
+
+
         try {
-            $senderTransactions = Transaction::where('sender_account_id', $user->id)
+            $account = Account::where('user_id', $user->id)->with('users')->first();
+            $senderTransactions = Transaction::where('sender_account_id', $account->id)
                 ->select('amount', 'sender_account_id', 'recipient_account_id')
                 ->with('recipient')
+                ->with('recipient.users')
                 ->get();
 
-            $recipientTransactions = Transaction::where('recipient_account_id', $user->id)
+
+            $recipientTransactions = Transaction::where('recipient_account_id', $account->id)
                 ->select('amount', 'sender_account_id', 'recipient_account_id')
                 ->with('sender')
+                ->with('sender.users')
                 ->get();
 
             return response()->json([
                 'sender_transactions' => $senderTransactions,
                 'recipient_transactions' => $recipientTransactions
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur: ' . $e->getMessage()], 500);
+        }
+    }
+
+
+    public function DAdmintransactionHistory()
+    {
+        $user = Auth::user();
+
+        if ($user->role != 1) {
+            return response()->json(['message' => 'Unauthorized' ], 401);
+        }
+
+        try {
+
+            $transaction = Transaction::select('amount', 'sender_account_id', 'recipient_account_id')
+                ->with('sender.users')
+                ->with('recipient.users')
+                ->get();
+
+
+
+            return response()->json([
+                'sender_transactions' => $transaction,
             ], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Erreur: ' . $e->getMessage()], 500);

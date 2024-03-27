@@ -45,6 +45,8 @@ class AccountController extends Controller
             $account = Account::create([
                 'Solde_actuel' => $request->Solde_actuel,
                 'user_id' => $user->id,
+                'numero_compte' => 'ACC' . str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT)
+
             ]);
 
             return response()->json(['message' => 'Compte créé avec succès', 'account' => $account], 201);

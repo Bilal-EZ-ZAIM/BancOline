@@ -32,6 +32,7 @@ class AuthController extends Controller
                 'prenom' => $request->prenom,
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
+                'role'=>2,
             ]);
 
             return response()->json(['message' => 'Utilisateur créé avec succès', 'user' => $user], 201);
@@ -94,4 +95,6 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Déconnexion réussie']);
     }
+
+
 }

@@ -14,11 +14,11 @@ class Transaction extends Model
 
     public function recipient()
     {
-        return $this->hasMany(User::class, "id" ,'recipient_account_id');
+        return $this->hasMany(Account::class, "id" ,'recipient_account_id');
     }
 
     public function sender()
     {
-        return $this->hasMany(User::class, "id" ,'sender_account_id');
+        return $this->hasMany(Account::class, "id" ,'sender_account_id');
     }
 }

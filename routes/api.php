@@ -33,3 +33,5 @@ Route::middleware('auth:sanctum')->post('/deposit', [AccountController::class, '
 Route::middleware('auth:sanctum')->post('/transfer', [TransactionController::class, 'transfer']);
 
 Route::middleware('auth:sanctum')->get('/transaction-history', [TransactionController::class, 'transactionHistory']);
+
+Route::middleware('auth:sanctum')->get('/DAdmintransactionHistory', [TransactionController::class, 'DAdmintransactionHistory']);
